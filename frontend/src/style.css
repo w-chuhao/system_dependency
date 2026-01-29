@@ -1,0 +1,88 @@
+
+
+.page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at top, #f6f1e8 0%, #e9eefb 55%, #e1e6f5 100%);
+  padding: 40px 16px;
+  color: #141b2a;
+  font-family: "Trebuchet MS", "Gill Sans", sans-serif;
+}
+
+.card {
+  width: min(640px, 100%);
+  background: #fefcf7;
+  border: 1px solid #e2d9c7;
+  box-shadow: 0 20px 60px rgba(26, 40, 64, 0.18);
+  border-radius: 18px;
+  padding: 28px 28px 32px;
+}
+
+h1 {
+  margin: 0 0 8px;
+  font-size: 32px;
+  letter-spacing: 0.02em;
+}
+
+p {
+  margin: 0 0 20px;
+  color: #3c4b64;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-weight: 600;
+}
+
+select {
+  appearance: none;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid #c4cce0;
+  background: #ffffff;
+  font-size: 14px;
+}
+
+.results {
+  margin-top: 20px;
+  border-top: 1px solid #e5dfd4;
+  padding-top: 16px;
+}
+
+h2 {
+  margin: 0 0 12px;
+  font-size: 18px;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 8px;
+}
+
+li {
+  padding: 10px 12px;
+  background: #edf2ff;
+  border-radius: 10px;
+  border: 1px solid #d3def7;
+}
+
+.status {
+  margin-top: 10px;
+  color: #5a6b86;
+}
+
+.error {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #ffe8e8;
+  border: 1px solid #f3b5b5;
+  color: #8b1b1b;
+}
