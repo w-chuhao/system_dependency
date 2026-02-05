@@ -103,4 +103,39 @@ router.get("/affected/:systemId", async (req, res) => {
   }
 });
 
+// Fetch the full system graph (all nodes and direct edges).
+router.get("/full", async (_req, res) => {
+  const session = getSession();
+
+  try {
+    const result = await session.run(
+      `
+      MATCH (a:System)-[:DEPENDS_ON]->(b:System)
+      RETURN DISTINCT a.systemId AS from, b.systemId AS to
+      ORDER BY from, to
+      `
+    );
+
+    const nodes = new Map();
+    const edges = [];
+
+    for (const r of result.records) {
+      const from = r.get("from");
+      const to = r.get("to");
+      nodes.set(from, { id: from });
+      nodes.set(to, { id: to });
+      edges.push({ from, to });
+    }
+
+    res.json({
+      nodes: [...nodes.values()],
+      edges
+    });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  } finally {
+    await session.close();
+  }
+});
+
 export default router;
