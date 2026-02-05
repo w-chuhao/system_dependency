@@ -36,7 +36,7 @@ router.get("/downstream/:systemId", async (req, res) => {
     // Query paths up to depth 5 from the starting System node.
     const result = await session.run(
       `
-      MATCH p=(affected:System)-[:DEPENDS_ON*1..5]->(failed:System {systemId:$id})
+      MATCH p=(affected:System)-[:DEPENDS_ON*]->(failed:System {systemId:$id})
       RETURN p
       `,
       { id: systemId }
@@ -87,7 +87,7 @@ router.get("/affected/:systemId", async (req, res) => {
   try {
     const result = await session.run(
       `
-      MATCH (affected:System)-[:DEPENDS_ON*1..5]->(failed:System {systemId:$id})
+      MATCH (affected:System)-[:DEPENDS_ON*]->(failed:System {systemId:$id})
       RETURN DISTINCT affected.systemId AS systemId
       ORDER BY systemId
       `,
