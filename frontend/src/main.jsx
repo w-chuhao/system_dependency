@@ -74,7 +74,7 @@ function App() {
         id: `${e.from}->${e.to}`,
         source: e.from,
         target: e.to,
-        label: "DEPENDS_ON"
+        label: e.protocol || "AFFECTS"
       }
     }))
   ];
@@ -131,10 +131,12 @@ function App() {
                   label: "data(label)",
                   "text-valign": "center",
                   "text-halign": "center",
+                  "text-wrap": "wrap",
+                  "text-max-width": "90px",
                   color: "#1b1b1b",
-                  "font-size": "12px",
-                  width: 48,
-                  height: 48
+                  "font-size": "11px",
+                  width: 96,
+                  height: 96
                 }
               },
               {

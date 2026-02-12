@@ -36,7 +36,7 @@ router.get("/downstream/:systemId", async (req, res) => {
     // Query paths up to depth 5 from the starting System node.
     const result = await session.run(
       `
-      MATCH p=(affected:System)-[:DEPENDS_ON*]->(failed:System {systemId:$id})
+      MATCH p= (failed:System {systemId:$id})-[:AFFECTS]->(affected:System)
       RETURN p
       `,
       { id: systemId }
@@ -55,10 +55,15 @@ router.get("/downstream/:systemId", async (req, res) => {
         const a = seg.start.properties.systemId;
         const b = seg.end.properties.systemId;
 
+        const protocol =
+          seg.relationship?.properties?.protocol ||
+          seg.relationship?.properties?.protocal ||
+          "AFFECTS";
+
         // Record unique nodes and edges for the response.
         nodes.set(a, { id: a });
         nodes.set(b, { id: b });
-        edges.set(`${a}->${b}`, { from: a, to: b });
+        edges.set(`${a}->${b}`, { from: a, to: b, protocol });
       }
     }
 
@@ -87,7 +92,7 @@ router.get("/affected/:systemId", async (req, res) => {
   try {
     const result = await session.run(
       `
-      MATCH (affected:System)-[:DEPENDS_ON*]->(failed:System {systemId:$id})
+      MATCH (failed:System {systemId:$id})-[:AFFECTS*1..]->(affected:System)
       RETURN DISTINCT affected.systemId AS systemId
       ORDER BY systemId
       `,
@@ -110,8 +115,11 @@ router.get("/full", async (_req, res) => {
   try {
     const result = await session.run(
       `
-      MATCH (a:System)-[:DEPENDS_ON]->(b:System)
-      RETURN DISTINCT a.systemId AS from, b.systemId AS to
+      MATCH (a:System)-[r:AFFECTS]->(b:System)
+      RETURN DISTINCT
+        a.systemId AS from,
+        b.systemId AS to,
+        coalesce(r.protocol, r.protocal, "AFFECTS") AS protocol
       ORDER BY from, to
       `
     );
@@ -122,9 +130,10 @@ router.get("/full", async (_req, res) => {
     for (const r of result.records) {
       const from = r.get("from");
       const to = r.get("to");
+      const protocol = r.get("protocol") || "AFFECTS";
       nodes.set(from, { id: from });
       nodes.set(to, { id: to });
-      edges.push({ from, to });
+      edges.push({ from, to, protocol });
     }
 
     res.json({
